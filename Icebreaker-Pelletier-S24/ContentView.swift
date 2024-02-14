@@ -8,9 +8,8 @@
 import SwiftUI
 import FirebaseFirestore
 
-
 struct ContentView: View {
-	
+
 	let db = Firestore.firestore()
 	
 	@State var firstName: String = ""

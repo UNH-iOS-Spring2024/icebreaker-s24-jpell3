@@ -7,6 +7,8 @@
 
 import SwiftUI
 import Firebase
+import FirebaseCore
+import FirebaseFirestore
 
 @main
 struct Icebreaker_Pelletier_S24App: App {
