@@ -6,14 +6,20 @@
 //
 
 import SwiftUI
+import FirebaseFirestore
+
 
 struct ContentView: View {
+	
+	let db = Firestore.firestore()
 	
 	@State var firstName: String = ""
 	@State var lastName: String = ""
 	@State var preferredName: String = ""
 	@State var answer: String = ""
 	@State var question: String = ""
+	
+	@State var questions = [Question]()
 
     var body: some View {
 			
@@ -21,32 +27,57 @@ struct ContentView: View {
 					Text("Icebreaker")
 						.font(.system(size: 40))
 						.bold()
+					
 					Text("Built with SwiftUI")
+				
 					TextField("First Name", text: $firstName)
+					
 					TextField("Last Name", text: $lastName)
+					
 					TextField("Preferred Name", text: $preferredName)
+					
 					Button(action: {
 						setRandomQuestion() }) {
 						Text("Get a new random question")
 					}
 					Text(question)
+					
 					TextField("Answer", text: $answer)
+					
 					Button(action: {
-						writeStudentToFirebase() }) {
+						writeStudent() }) {
 						Text("Submit")
 						}
         }
-				.font(.largeTitle)
-				.multilineTextAlignment(.center)
-        .padding()
-				.autocorrectionDisabled()
+					.font(.largeTitle)
+					.multilineTextAlignment(.center)
+					.padding()
+					.autocorrectionDisabled()
+					.onAppear() {
+						fetchQuestions()
+					}
     }
 	
 	func setRandomQuestion() {
-		print("first name: \(firstName)")
+		var newQuestion = questions.randomElement()?.text
+		self.question = newQuestion!
 	}
 	
-	func writeStudentToFirebase() {
+	func fetchQuestions() {
+			db.collection("questions")
+			.getDocuments() { (QuerySnapshot, err) in
+				if let err = err {
+					print("Error getting documents: \(err)")
+				} else {
+					for document in QuerySnapshot!.documents {
+						print("\(document.documentID)")
+					}
+				}
+				
+			}
+	}
+	
+	func writeStudent() {
 		print("\(firstName) (\(preferredName)) \(lastName)")
 		print("\(answer)")
 	}
