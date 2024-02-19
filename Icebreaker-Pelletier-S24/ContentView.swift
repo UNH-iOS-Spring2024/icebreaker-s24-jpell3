@@ -44,9 +44,15 @@ struct ContentView: View {
 					TextField("Answer", text: $answer)
 					
 					Button(action: {
-						writeStudent() }) {
-						Text("Submit")
+						if(answer != "") {
+							writeStudent()
 						}
+						resetForm()
+					}) {
+						Text("Submit")
+							.font(.system(size: 38))
+						}
+					.padding(30)
         }
 					.font(.largeTitle)
 					.multilineTextAlignment(.center)
@@ -100,6 +106,14 @@ struct ContentView: View {
 				print("Document added successfully: \(ref!.documentID)")
 			}
 		}
+	}
+	
+	func resetForm() {
+		firstName = ""
+		lastName = ""
+		preferredName = ""
+		question = ""
+		answer = ""
 	}
 }
 
