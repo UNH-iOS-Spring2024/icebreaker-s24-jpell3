@@ -58,18 +58,24 @@ struct ContentView: View {
     }
 	
 	func setRandomQuestion() {
-		var newQuestion = questions.randomElement()?.text
+		let newQuestion = questions.randomElement()?.text
 		self.question = newQuestion!
 	}
 	
 	func fetchQuestions() {
-			db.collection("questions")
-			.getDocuments() { (QuerySnapshot, err) in
+		var date = NSDate()
+		print("\(date)")
+			db.collection("questions").getDocuments() { (QuerySnapshot, err) in
 				if let err = err {
 					print("Error getting documents: \(err)")
 				} else {
 					for document in QuerySnapshot!.documents {
-						print("\(document.documentID)")
+						if let question = Question(
+							id: document.documentID,
+							data: document.data()) {
+							print("Question ID = \(question.id), text = \(question.text)")
+							self.questions.append(question)
+						}
 					}
 				}
 				
