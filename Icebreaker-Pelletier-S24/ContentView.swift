@@ -59,38 +59,42 @@ struct ContentView: View {
 					.padding()
 					.autocorrectionDisabled()
 					.onAppear() {
+						log(message: "Attempting to fetch questions from database...")
 						fetchQuestions()
 					}
     }
 	
-	func setRandomQuestion() {
-		let newQuestion = questions.randomElement()?.text
-		self.question = newQuestion!
+	func log(message: String) {
+		let date = Date().formatted(date: .omitted, time: .complete)
+		print("\(date):  \(message)")
 	}
-	
+
 	func fetchQuestions() {
-		var date = NSDate()
-		print("\(date)")
 			db.collection("questions").getDocuments() { (QuerySnapshot, err) in
 				if let err = err {
-					print("Error getting documents: \(err)")
+					log(message: "Failed to fetch questions from database: \(err)")
 				} else {
 					for document in QuerySnapshot!.documents {
 						if let question = Question(
 							id: document.documentID,
 							data: document.data()) {
-							print("Question ID = \(question.id), text = \(question.text)")
 							self.questions.append(question)
 						}
 					}
+					log(message: "Successfully fetched \(QuerySnapshot!.count) questions from database")
 				}
 				
 			}
 	}
 	
+	func setRandomQuestion() {
+		log(message: "Generated random question")
+		let newQuestion = questions.randomElement()?.text
+		self.question = newQuestion!
+	}
+	
 	func writeStudent() {
-		print("\(firstName) (\(preferredName)) \(lastName)")
-		print("\(answer)")
+		log(message: "Submission Attempt: name=\(firstName) preferredName=\(preferredName) lastName=\(lastName) question=\(question) answer=\(answer)")
 		
 		let data = ["first-name": firstName,
 								"last-name": lastName,
@@ -101,9 +105,9 @@ struct ContentView: View {
 		var ref: DocumentReference? = nil
 		ref = db.collection("students").addDocument(data: data) { err in
 			if let err = err {
-				print("Error writing documents: \(err)")
+				log(message: "Submission failed to update database: \(err)")
 			} else {
-				print("Document added successfully: \(ref!.documentID)")
+				log(message: "Submission successfully pushed to database. ReferenceID: \(ref!.documentID)")
 			}
 		}
 	}
@@ -120,3 +124,4 @@ struct ContentView: View {
 #Preview {
     ContentView()
 }
+
