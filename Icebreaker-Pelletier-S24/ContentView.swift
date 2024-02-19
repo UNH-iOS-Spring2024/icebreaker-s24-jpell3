@@ -85,6 +85,21 @@ struct ContentView: View {
 	func writeStudent() {
 		print("\(firstName) (\(preferredName)) \(lastName)")
 		print("\(answer)")
+		
+		let data = ["first-name": firstName,
+								"last-name": lastName,
+								"perf-name": preferredName,
+								"question": question,
+								"answer": answer] as [String: Any]
+		
+		var ref: DocumentReference? = nil
+		ref = db.collection("students").addDocument(data: data) { err in
+			if let err = err {
+				print("Error writing documents: \(err)")
+			} else {
+				print("Document added successfully: \(ref!.documentID)")
+			}
+		}
 	}
 }
 
